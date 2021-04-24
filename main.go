@@ -2,8 +2,9 @@ package main
 
 import (
 	"golang-practice/user"
+	"golang-practice/handler"
 	// "net/http"
-	// "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 	"log"
 
 	"gorm.io/driver/mysql"
@@ -19,9 +20,14 @@ func main()  {
 	}
 
 	userRepository := user.NewRepository(db)
-	user := user.User{
-		Name: "Test Aja",
-	}
+	userService := user.NewService(userRepository)
 
-	userRepository.Save(user)
+	userHandler := handler.NewUserHandler(userService)
+
+	router := gin.Default()
+	api := router.Group("/api/v1")
+
+	api.POST("/users", userHandler.RegisterUser)
+
+	router.Run()
 }
