@@ -2,7 +2,8 @@ package main
 
 import (
 	"golang-practice/user"
-	"fmt"
+	// "net/http"
+	// "github.com/gin-gonic/gin"
 	"log"
 
 	"gorm.io/driver/mysql"
@@ -17,23 +18,10 @@ func main()  {
 		log.Fatal(err.Error())
 	}
 
-	fmt.Println("Database Connected")
-
-	var users []user.User
-	length := len(users)
-
-	fmt.Println(length)
-	
-	//pointer type
-	db.Find(&users)
-
-	length = len(users)
-	fmt.Println(length)
-
-	for _, user := range users{
-		fmt.Println(user.Name)
-		fmt.Println(user.Email)
-		fmt.Println("========")
+	userRepository := user.NewRepository(db)
+	user := user.User{
+		Name: "Test Aja",
 	}
 
+	userRepository.Save(user)
 }
