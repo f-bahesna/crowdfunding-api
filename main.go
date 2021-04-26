@@ -6,6 +6,7 @@ import (
 	// "net/http"
 	"github.com/gin-gonic/gin"
 	"log"
+	// "fmt"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -28,6 +29,7 @@ func main()  {
 	api := router.Group("/api/v1")
 
 	api.POST("/users", userHandler.RegisterUser)
+	api.POST("/sessions", userHandler.Login)
 
 	router.Run()
 }
