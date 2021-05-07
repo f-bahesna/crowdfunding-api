@@ -18,7 +18,6 @@ func NewUserHandler(userService user.Service) *userHandler {
 func (h *userHandler) RegisterUser(c *gin.Context){
 	//catch input from user
 	//map user input to struct RegisterUserInput
-
 	var input user.RegisterUserInput
 
 	err := c.ShouldBindJSON(&input)
@@ -110,4 +109,9 @@ func (h *userHandler) EmailAvailability(c *gin.Context){
 
 	response := helper.APIResponse(metaMessage, http.StatusOK, "success", data)
 	c.JSON(http.StatusOK, response)	
+}
+
+func (h *userHandler) UploadAvatar(c *gin.Context){
+	//input dari user
+	
 }
