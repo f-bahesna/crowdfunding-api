@@ -2,31 +2,29 @@ package handler
 
 import (
 	"golang-practice/user"
+	"golang-practice/helper"
+	"golang-practice/auth"
 	"net/http"
 	"github.com/gin-gonic/gin"
-	"golang-practice/helper"
 	"fmt"
 )
 
 type userHandler struct {
 	userService user.Service
+	authService auth.Service
 }
 
-func NewUserHandler(userService user.Service) *userHandler {
-	return &userHandler{userService}
+func NewUserHandler(userService user.Service, authService auth.Service) *userHandler {
+	return &userHandler{userService, authService}
 }
 
 func (h *userHandler) RegisterUser(c *gin.Context){
-	//catch input from user
-	//map user input to struct RegisterUserInput
 	var input user.RegisterUserInput
 
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
-
 		errorMessage := gin.H{"errors": errors}
-
 		response := helper.APIResponse("register account failed", http.StatusUnprocessableEntity, "error", errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
@@ -39,7 +37,14 @@ func (h *userHandler) RegisterUser(c *gin.Context){
 		return
 	}
 
-	formatter := user.FormatUser(newUser, "token123test")
+	token, err := h.authService.GenerateToken(newUser.ID, newUser.Email)
+	if err != nil {
+		response := helper.APIResponse("Register account failed",http.StatusUnprocessableEntity, "error", err.Error())
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	formatter := user.FormatUser(newUser, token)
 
 	response := helper.APIResponse("account has been registered", http.StatusOK, "success", formatter)
 
@@ -53,28 +58,31 @@ func (h *userHandler) Login(c *gin.Context){
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
-
 		response := helper.APIResponse("login failed", http.StatusUnprocessableEntity, "error", errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
 
 	loggedinUser, err := h.userService.Login(input)
-
 	if err != nil {
 		errorMessage := gin.H{"errors": err.Error()}
-
 		response := helper.APIResponse("login failed", http.StatusUnprocessableEntity, "error", errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
 
-	formatter := user.FormatUser(loggedinUser, "test_token")
+	token, err := h.authService.GenerateToken(loggedinUser.ID, loggedinUser.Email)
+	if err != nil {
+		response := helper.APIResponse("login failed", http.StatusUnprocessableEntity, "error", nil)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	formatter := user.FormatUser(loggedinUser, token)
 
 	response := helper.APIResponse("login success", http.StatusOK, "success", formatter)
 
 	c.JSON(http.StatusOK, response)
-
 }
 
 func (h *userHandler) EmailAvailability(c *gin.Context){

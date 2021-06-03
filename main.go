@@ -3,6 +3,7 @@ package main
 import (
 	"golang-practice/user"
 	"golang-practice/handler"
+	"golang-practice/auth"
 	// "net/http"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -22,10 +23,9 @@ func main()  {
 
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
+	authService := auth.NewService()
 
-	// userService.SaveAvatar(1, "image/1-profile.png")
-
-	userHandler := handler.NewUserHandler(userService)
+	userHandler := handler.NewUserHandler(userService, authService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
