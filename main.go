@@ -5,11 +5,12 @@ import (
 	"golang-practice/handler"
 	"golang-practice/auth"
 	"golang-practice/helper"
+	"golang-practice/campaign"
 	"net/http"
 
 	"log"
 	"strings"
-	// "fmt"
+	"fmt"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -28,6 +29,17 @@ func main()  {
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
+	campaignRepository := campaign.NewRepository(db)
+
+	campaigns, err := campaignRepository.FindByUserID(2)
+
+	fmt.Println("debug")
+	fmt.Println("debug")
+	fmt.Println("debug")
+	fmt.Println(len(campaigns))
+	for _, campaign := range campaigns {
+		fmt.Println(campaign.Name)
+	}
 
 	userHandler := handler.NewUserHandler(userService, authService)
 
