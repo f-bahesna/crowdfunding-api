@@ -1,8 +1,9 @@
 package user
 
 import (
-	"golang.org/x/crypto/bcrypt"
 	"errors"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Service interface {
@@ -18,11 +19,11 @@ type service struct {
 	repository Repository
 }
 
-func NewService(repository Repository) *service{
+func NewService(repository Repository) *service {
 	return &service{repository}
 }
 
-func(s *service) RegisterUser(input RegisterUserInput) (User,error){
+func (s *service) RegisterUser(input RegisterUserInput) (User, error) {
 	user := User{}
 	user.Name = input.Name
 	user.Email = input.Email
@@ -37,19 +38,19 @@ func(s *service) RegisterUser(input RegisterUserInput) (User,error){
 	user.Role = "user"
 
 	newUser, err := s.repository.Save(user)
-	if err != nil{
+	if err != nil {
 		return newUser, err
 	}
 
 	return newUser, nil
 }
 
-func (s *service) Login(input LoginInput) (User, error){
+func (s *service) Login(input LoginInput) (User, error) {
 	email := input.Email
 	password := input.Password
 
 	user, err := s.repository.FindByEmail(email)
-	if err != nil{
+	if err != nil {
 		return user, err
 	}
 
@@ -59,14 +60,14 @@ func (s *service) Login(input LoginInput) (User, error){
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 
-	if err != nil{
+	if err != nil {
 		return user, err
 	}
 
 	return user, nil
 }
 
-func (s *service) IsEmailAvailable(input EmailAvailabilityInput) (bool, error){
+func (s *service) IsEmailAvailable(input EmailAvailabilityInput) (bool, error) {
 	email := input.Email
 
 	user, err := s.repository.FindByEmail(email)
@@ -81,7 +82,7 @@ func (s *service) IsEmailAvailable(input EmailAvailabilityInput) (bool, error){
 	return false, nil
 }
 
-func (s *service) SaveAvatar(ID int, fileLocation string) (User, error){
+func (s *service) SaveAvatar(ID int, fileLocation string) (User, error) {
 	//get the user by id
 	//update attribute user file name
 	// save updated avatar file name
@@ -100,9 +101,9 @@ func (s *service) SaveAvatar(ID int, fileLocation string) (User, error){
 	return updatedUser, nil
 }
 
-func (s *service) GetUserByID(ID int) (User, error){
+func (s *service) GetUserByID(ID int) (User, error) {
 	user, err := s.repository.FindByID(ID)
-	if err != nil{
+	if err != nil {
 		return user, err
 	}
 
