@@ -1,6 +1,7 @@
 package campaign
 
 import (
+	"golang-practice/user"
 	"time"
 )
 
@@ -18,6 +19,7 @@ type Campaign struct {
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 	CampaignImages   []CampaignImage
+	User             user.User
 }
 
 type CampaignImage struct {
