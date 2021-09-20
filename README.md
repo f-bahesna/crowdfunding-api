@@ -2,6 +2,16 @@
 
 ### Day 0: September 20, 2021
 ##### (I didn't count before)
+#### There's a feature that I've made
+- Register User endpoint
+- Login endpoint
+- Email check endpoint
+- Avatar upload endpoint
+- JWT Authentication
+- Authentication Middleware
+- List campaign endpoint
+- Campaign detail endpoint
+
 
 **Today's Progress**: Add create campaign endpoint
 
