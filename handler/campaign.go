@@ -3,6 +3,7 @@ package handler
 import (
 	"golang-practice/campaign"
 	"golang-practice/helper"
+	"golang-practice/user"
 	"net/http"
 	"strconv"
 
@@ -38,9 +39,6 @@ func (h *campaignHandler) GetCampaigns(c *gin.Context) {
 }
 
 func (h *campaignHandler) GetCampaign(c *gin.Context) {
-	// handler : mapping id yang di input ke input => di service call formatter
-	// service : manggil repo dari yang terima id dari input.
-	// repository: get campaign by id
 	var input campaign.GetCampaignDetailInput
 
 	if err := c.ShouldBindUri(&input); err != nil {
@@ -55,6 +53,32 @@ func (h *campaignHandler) GetCampaign(c *gin.Context) {
 		return
 	} else {
 		response := helper.APIResponse("Campaign Detail", http.StatusOK, "success", campaign.FormatCampaignDetail(campaignDetail))
+		c.JSON(http.StatusOK, response)
+	}
+}
+
+func (h *campaignHandler) CreateCampaign(c *gin.Context) {
+	var input campaign.CreateCampaignInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.APIResponse("Create campaign failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	currentUser := c.MustGet("current_user").(user.User)
+
+	input.User = currentUser
+
+	if newCampaign, err := h.service.CreateCampaign(input); err != nil {
+		response := helper.APIResponse("create campaign failed", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	} else {
+		response := helper.APIResponse("create campaign success", http.StatusOK, "success", campaign.FormatCampaign(newCampaign))
 		c.JSON(http.StatusOK, response)
 	}
 }
