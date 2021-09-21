@@ -2,7 +2,7 @@
 
 ### Day 0: September 20, 2021
 ##### (I didn't count before)
-#### There's a feature that I've made before today:
+#### There's a feature that I've made before:
 - Register User endpoint
 - Login endpoint
 - Email check endpoint
