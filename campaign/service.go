@@ -1,6 +1,7 @@
 package campaign
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/gosimple/slug"
@@ -10,6 +11,7 @@ type Service interface {
 	FindCampaigns(userID int) ([]Campaign, error)
 	FindCampaignByID(input GetCampaignDetailInput) (Campaign, error)
 	CreateCampaign(input CreateCampaignInput) (Campaign, error)
+	UpdateCampaign(campaign GetCampaignDetailInput, input CreateCampaignInput) (Campaign, error)
 }
 
 type service struct {
@@ -63,5 +65,28 @@ func (s *service) CreateCampaign(input CreateCampaignInput) (Campaign, error) {
 		return newCampaign, err
 	} else {
 		return newCampaign, nil
+	}
+}
+
+func (s *service) UpdateCampaign(campaign GetCampaignDetailInput, input CreateCampaignInput) (Campaign, error) {
+	if campaign, err := s.repository.FindByID(campaign.ID); err != nil {
+		return campaign, err
+	} else {
+
+		if campaign.UserID != input.User.ID {
+			return campaign, errors.New("Your not authorized to edit this campaign")
+		}
+
+		campaign.Name = input.Name
+		campaign.ShortDescription = input.ShortDescription
+		campaign.Description = input.Description
+		campaign.Perks = input.Perks
+		campaign.GoalAmount = input.GoalAmount
+
+		if update, err := s.repository.UpdateCampaign(campaign); err != nil {
+			return update, err
+		} else {
+			return update, nil
+		}
 	}
 }

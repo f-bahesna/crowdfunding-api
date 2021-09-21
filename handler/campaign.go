@@ -82,3 +82,35 @@ func (h *campaignHandler) CreateCampaign(c *gin.Context) {
 		c.JSON(http.StatusOK, response)
 	}
 }
+
+func (h *campaignHandler) UpdateCampaign(c *gin.Context) {
+	var campaignID campaign.GetCampaignDetailInput
+
+	if err := c.ShouldBindUri(&campaignID); err != nil {
+		response := helper.APIResponse("update campaign failed", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	var input campaign.CreateCampaignInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.APIResponse("update campaign failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	input.User = c.MustGet("current_user").(user.User)
+
+	if updated, err := h.service.UpdateCampaign(campaignID, input); err != nil {
+		response := helper.APIResponse(err.Error(), http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	} else {
+		response := helper.APIResponse("update campaign success", http.StatusOK, "success", campaign.FormatCampaign(updated))
+		c.JSON(http.StatusOK, response)
+	}
+}
