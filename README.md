@@ -43,7 +43,9 @@
 
 ### Day 5: October 14, 2021 
 
-**Today's Progress**: Fix input body params for is_primary campaign images
+**Today's Progress**: Fix input body params for is_primary campaign images & Prepare for transaction service
 
-**Thourghts:** Deleted binding for is_primary input because that is boolean and when u want to set false just dont fill in the params.
+**Thourght: 1.**  Deleted binding for is_primary input because that is boolean and when u want to set false just dont fill in the params.
+
+**Thourght: 2.** Create domain dan entity for transation service.  
 
