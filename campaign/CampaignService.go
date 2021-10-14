@@ -12,6 +12,7 @@ type Service interface {
 	FindCampaignByID(input GetCampaignDetailInput) (Campaign, error)
 	CreateCampaign(input CreateCampaignInput) (Campaign, error)
 	UpdateCampaign(campaign GetCampaignDetailInput, input CreateCampaignInput) (Campaign, error)
+	SaveCampaignImage(input CreateCampaignImageInput, fileLocation string) (CampaignImage, error)
 }
 
 type service struct {
@@ -74,7 +75,7 @@ func (s *service) UpdateCampaign(campaign GetCampaignDetailInput, input CreateCa
 	} else {
 
 		if campaign.UserID != input.User.ID {
-			return campaign, errors.New("Your not authorized to edit this campaign")
+			return campaign, errors.New("your not authorized to edit this campaign")
 		}
 
 		campaign.Name = input.Name
@@ -88,5 +89,37 @@ func (s *service) UpdateCampaign(campaign GetCampaignDetailInput, input CreateCa
 		} else {
 			return update, nil
 		}
+	}
+}
+
+func (s *service) SaveCampaignImage(input CreateCampaignImageInput, fileLocation string) (CampaignImage, error) {
+	campaign, err := s.repository.FindByID(input.CampaignID)
+	if err != nil {
+		return CampaignImage{}, err
+	}
+
+	if campaign.UserID != input.User.ID {
+		return CampaignImage{}, errors.New("your not authorized to edit this campaign")
+	}
+
+	IsPrimary := false
+
+	if input.IsPrimary {
+		IsPrimary = true
+
+		if _, err := s.repository.MarkAllImagesAsNonPrimary(input.CampaignID); err != nil {
+			return CampaignImage{}, err
+		}
+	}
+
+	campaignImage := CampaignImage{}
+	campaignImage.CampaignID = input.CampaignID
+	campaignImage.IsPrimary = IsPrimary
+	campaignImage.FileName = fileLocation
+
+	if campaignImageCreated, err := s.repository.CreateImage(campaignImage); err != nil {
+		return campaignImageCreated, err
+	} else {
+		return campaignImageCreated, nil
 	}
 }

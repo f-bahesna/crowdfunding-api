@@ -111,7 +111,7 @@ func FormatCampaignDetail(campaign Campaign) CampaignDetailFormatter {
 
 		isPrimary := false
 
-		if image.IsPrimary == 1 {
+		if image.IsPrimary {
 			isPrimary = true
 		}
 		CampaignImageFormatter.IsPrimary = isPrimary

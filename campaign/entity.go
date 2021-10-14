@@ -1,5 +1,6 @@
 package campaign
 
+//entity or a.k.a model
 import (
 	"golang-practice/user"
 	"time"
@@ -26,7 +27,7 @@ type CampaignImage struct {
 	ID         int
 	CampaignID int
 	FileName   string
-	IsPrimary  int
+	IsPrimary  bool
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }

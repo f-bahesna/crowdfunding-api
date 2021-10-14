@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"golang-practice/campaign"
 	"golang-practice/helper"
 	"golang-practice/user"
@@ -111,6 +112,66 @@ func (h *campaignHandler) UpdateCampaign(c *gin.Context) {
 		return
 	} else {
 		response := helper.APIResponse("update campaign success", http.StatusOK, "success", campaign.FormatCampaign(updated))
+		c.JSON(http.StatusOK, response)
+	}
+}
+
+func (h *campaignHandler) UploadImage(c *gin.Context) {
+	var input campaign.CreateCampaignImageInput
+
+	//catch form data request
+	err := c.ShouldBind(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.APIResponse("upload campaign failed, some error in input", http.StatusBadRequest, "error", errorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	currentUser := c.MustGet("current_user").(user.User)
+	input.User = currentUser
+	userID := currentUser.ID
+
+	//get the file
+	if file, err := c.FormFile("file"); err != nil {
+		data := gin.H{"is_uploaded": false}
+		response := helper.APIResponse("upload campaign file failed", http.StatusBadRequest, "error", data)
+
+		c.JSON(http.StatusBadRequest, response)
+		return
+	} else {
+
+		path := fmt.Sprintf("images/campaign/%d-%s", userID, file.Filename)
+
+		//save file
+		if err = c.SaveUploadedFile(file, path); err != nil {
+			// c.Error(err)
+			// c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+			data := gin.H{"is_uploaded": false}
+			response := helper.APIResponse("failed save uploaded file", http.StatusBadRequest, "error", data)
+
+			c.JSON(http.StatusBadRequest, response)
+			return
+		}
+
+		// TODO: failed to save filepath in db (13/10/2021)
+		// Clear: save image to db when is_primary false/true (14/10/2021)
+		//save to db
+		if _, err = h.service.SaveCampaignImage(input, path); err != nil {
+			// c.Error(err)
+			// c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+			data := gin.H{"is_uploaded": false}
+			response := helper.APIResponse("failed save campaign image", http.StatusBadRequest, "error", data)
+
+			c.JSON(http.StatusBadRequest, response)
+			return
+		}
+
+		data := gin.H{"is_uploaded": true}
+		response := helper.APIResponse("upload campaign success", http.StatusOK, "success", data)
+
 		c.JSON(http.StatusOK, response)
 	}
 }
