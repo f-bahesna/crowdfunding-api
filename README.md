@@ -49,3 +49,13 @@
 
 **Thourght: 2.** Create domain dan entity for transation service.  
 
+### Day 6: October 15, 2021 
+
+**Today's Progress**:
+- Create new endpoint campaign transaction list by campaign id.
+- Authorization for campaign transaction list by user who created campaign.
+
+**Thourght: 1.**  Deleted binding for is_primary input because that is boolean and when u want to set false just dont fill in the params.
+
+**Concern** Authorization succeeds gives an error if the campaign transaction list isn't the user who made it. but if more than one and there is another user_id in transaction list , the transaction still appears.
+

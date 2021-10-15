@@ -1,12 +1,16 @@
 package transaction
 
-import "time"
+import (
+	"golang-practice/user"
+	"time"
+)
 
 //representasi dari table transaction
 type Transaction struct {
 	ID         int
 	CampaignID int
 	UserID     int
+	User       user.User
 	Amount     int
 	Status     string
 	Code       string

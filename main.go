@@ -5,7 +5,9 @@ import (
 	"golang-practice/campaign"
 	"golang-practice/handler"
 	"golang-practice/helper"
+	"golang-practice/transaction"
 	"golang-practice/user"
+
 	"net/http"
 
 	"log"
@@ -25,15 +27,22 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
+	authService := auth.NewService()
+
+	// User Domain
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
-	authService := auth.NewService()
-	campaignRepository := campaign.NewRepository(db)
-
-	campaignService := campaign.NewService(campaignRepository)
-
 	userHandler := handler.NewUserHandler(userService, authService)
+
+	// Campaign Domain
+	campaignRepository := campaign.NewRepository(db)
+	campaignService := campaign.NewService(campaignRepository)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
+
+	// Transaction Domain
+	transactionRepository := transaction.NewRepository(db)
+	transactionService := transaction.NewService(transactionRepository, campaignRepository)
+	transactionHandler := handler.NewTransactionHandler(transactionService)
 
 	router := gin.Default()
 	router.Static("/images", "./images")
@@ -49,6 +58,7 @@ func main() {
 	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
 	api.PUT("/campaigns/:id", authMiddleware(authService, userService), campaignHandler.UpdateCampaign)
 	api.POST("/campaign-images", authMiddleware(authService, userService), campaignHandler.UploadImage)
+	api.GET("/campaigns/:id/transactions", authMiddleware(authService, userService), transactionHandler.GetCampaignTransaction)
 
 	router.Run()
 }
