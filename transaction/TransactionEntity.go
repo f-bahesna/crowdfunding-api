@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"golang-practice/campaign"
 	"golang-practice/user"
 	"time"
 )
@@ -11,6 +12,7 @@ type Transaction struct {
 	CampaignID int
 	UserID     int
 	User       user.User
+	Campaign   campaign.Campaign
 	Amount     int
 	Status     string
 	Code       string

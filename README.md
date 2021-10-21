@@ -29,19 +29,13 @@
 
 **Thourghts:** Adding image with params [ is_primary ] utility to define, main image of campaign.
 
-### Day 3: October 02, 2021 
-
-**Today's Progress**: Add Upload campaign image endpoint
-
-**Thourghts:** Adding image with params [ is_primary ] utility to define, main image of campaign.
-
-### Day 4: October 13, 2021
+### Day 3: October 13, 2021
 
 **Today's Progress**: Fix bugs upload campaign images endpoint
 
 **Thourghts:** Struggled when uploading image filepath to database, because some parts in the database that Relation between campaign & campaignImages I've already set and that's the problem. I deleted relation and running as usual. not recommended but let's finish this course.
 
-### Day 5: October 14, 2021 
+### Day 4: October 14, 2021 
 
 **Today's Progress**: Fix input body params for is_primary campaign images & Prepare for transaction service
 
@@ -49,7 +43,7 @@
 
 **Thourght: 2.** Create domain dan entity for transation service.  
 
-### Day 6: October 15, 2021 
+### Day 5: October 15, 2021 
 
 **Today's Progress**:
 - Create new endpoint campaign transaction list by campaign id.
@@ -58,4 +52,12 @@
 **Thourght: 1.**  Deleted binding for is_primary input because that is boolean and when u want to set false just dont fill in the params.
 
 **Concern** Authorization succeeds gives an error if the campaign transaction list isn't the user who made it. but if more than one and there is another user_id in transaction list , the transaction still appears.
+
+### Day 6: October 21, 2021 
+
+**Progress**: Add Transaction Endpoint
+
+**Thourght:** Add Transaction handler , Service, Repository, Entity and the last build formatter json response for API response. 
+
+
 
