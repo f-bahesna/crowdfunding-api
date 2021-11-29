@@ -59,5 +59,11 @@
 
 **Thourght:** Add Transaction handler , Service, Repository, Entity and the last build formatter json response for API response. 
 
+### Day 7: November 29, 2021 
+
+**Progress**: Add Docker Configuration With Postgresql Database
+
+**Thourght:** I've so many make mistake when setup docker in here, such as wrong configuration in dockerfile, wrong host for connection go container with postgre database because can't connect localhost from Docker and I solve with "docker.for.mac.localhost" in main.go file and finally works!
+
 
 
