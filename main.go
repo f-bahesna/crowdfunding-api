@@ -15,13 +15,17 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
+
 	"gorm.io/gorm"
 )
 
 func main() {
-	dsn := "root:@tcp(127.0.0.1:3306)/golang_practice?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.New(postgres.Config{
+		DSN: "host=docker.for.mac.localhost user=postgres dbname=crowd_db password=root sslmode=disable",
+		PreferSimpleProtocol: true,
+	  }),
+	)
 
 	if err != nil {
 		log.Fatal(err.Error())
